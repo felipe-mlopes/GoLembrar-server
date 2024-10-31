@@ -125,14 +125,13 @@ export { EmailService };
 
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { MailtrapService } from './mailtrap/mailtrap.service';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EmailService {
   constructor(
     private readonly mailerService: MailerService,
-    private readonly mailtrapService: MailtrapService,
+    // private readonly mailtrapService: MailtrapService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -153,7 +152,7 @@ export class EmailService {
     } catch (smtpError) {
       console.log('SMTP error:', smtpError);
       try {
-        await this.mailtrapService.sendEmail(email, subject, context);
+        // await this.mailtrapService.sendEmail(email, subject, context);
         console.log('Email sent successfully by API');
         return true;
       } catch (apiError) {

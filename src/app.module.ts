@@ -11,7 +11,6 @@ import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { CacheService } from './cache/cache.service';
 import { ContactModule } from './contact/contact.module';
-// import { EmailScheduledModule } from './email/email.module';
 import { MailtrapModule } from './email/mailtrap/mailtrap.module';
 import { FactoryModule } from './factories/factory.module';
 import { PrismaService } from './prisma/prisma.service';
@@ -37,7 +36,6 @@ import { UserModule } from './user/user.module';
     EmailModule,
     RabbitmqModule,
     TasksModule,
-    // EmailScheduledModule,
     MailtrapModule,
     FactoryModule,
     ScheduleModule.forRoot(),

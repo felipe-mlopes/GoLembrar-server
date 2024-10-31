@@ -1,6 +1,6 @@
 {
-  "name": "go-lembrar-server",
-  "homepage": "https://golembrar.com/",
+  "name": "golembrar-server",
+  "homepage": "https://golembrar.com",
   "version": "0.1.0",
   "author": "",
   "private": true,

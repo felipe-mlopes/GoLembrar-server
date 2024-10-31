@@ -1,8 +1,10 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { EmailService } from './email.service';
 import { MailtrapModule } from '../../src/email/mailtrap/mailtrap.module';
+import { EmailListenerController } from '../../src/events/email-listener/email-listener.controller';
+import { PrismaService } from '../../src/prisma/prisma.service';
+import { EmailService } from './email.service';
 
 @Module({
   imports: [
@@ -19,7 +21,8 @@ import { MailtrapModule } from '../../src/email/mailtrap/mailtrap.module';
       },
     }),
   ],
-  providers: [EmailService],
+  controllers: [EmailListenerController],
+  providers: [EmailService, PrismaService],
   exports: [EmailService],
 })
 export class EmailModule {}
