@@ -18,7 +18,7 @@
     "url": "https://github.com/GoLembrar/GoLembrar-server/issues"
   },
   "scripts": {
-    "postinstall": "prisma generate && prisma db push",
+    "postinstall": "prisma generate",
     "prisma-dev": "prisma generate && prisma db push",
     "prisma-gen": "prisma generate",
     "prisma-studio": "prisma studio",
