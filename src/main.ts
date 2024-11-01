@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as basicAuth from 'express-basic-auth';
+import basicAuth from 'express-basic-auth';
 import { AppModule } from './app.module';
 
 async function bootstrap() {

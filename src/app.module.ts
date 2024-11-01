@@ -50,6 +50,4 @@ import { UserModule } from './user/user.module';
   controllers: [AppController],
   providers: [PrismaService, CacheService],
 })
-
-//
 export class AppModule {}
