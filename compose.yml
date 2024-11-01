@@ -2,17 +2,14 @@ services:
   golembrar-api:
     container_name: goLembrar-api
     build:
-      target: dev
       context: .
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    # image: golembrar/api:1.0
+    image: golembrar/api:1.0
     env_file: ".env"
     networks:
       - default
-    volumes:
-      - .:/app
     depends_on:
       - golembrar-db
       - golembrar-cache

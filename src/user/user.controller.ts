@@ -38,38 +38,6 @@ export class UserController {
     private readonly emailService: EmailService,
   ) {}
 
-  @Get('email-test')
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Test email' })
-  @CreatedResponse('User created response successfully', 'user created')
-  @BadRequestResponse()
-  @ConflictResponse()
-  public async emailTest(@Res() response: Response) {
-    this.emailService.sendEmail(
-      'golembrar@gmail.com',
-      'Bem vindo ao goLembrar!!',
-      `
-Olá, ${'seu nome aqui'} 👋!<br>
-Seja bem-vindo ao goLembrar, o aplicativo que vai tornar sua vida mais organizada diretamente pelo seu WhatsApp!
-Estamos muito felizes em tê-lo conosco. Com o goLembrar, você nunca mais vai esquecer suas tarefas importantes. Aqui está o que você precisa saber para começar:
-
-Como funciona: O goLembrar envia seus lembretes diretamente para o seu WhatsApp. Simples assim!
-Configuração rápida: Não é necessário baixar nenhum aplicativo adicional. Tudo acontece no WhatsApp que você já usa.
-Personalize seus lembretes: Escolha quando e com que frequência deseja receber suas notificações.
-Fácil de usar: Para adicionar um lembrete, basta enviar uma mensagem para o nosso número. Experimente agora mesmo enviando "Lembrar de beber água às 10h".
-Privacidade garantida: Seus dados estão seguros conosco. Não compartilhamos suas informações com terceiros.
-
-Para começar, salve nosso número de contato: [Inserir número do goLembrar]
-Tem alguma dúvida? Responda a este e-mail ou envie uma mensagem para nosso suporte no WhatsApp. Estamos aqui para ajudar!
-Pronto para uma vida mais organizada?
-Equipe goLembrar
-Lembretes que fazem a diferença!
-      `,
-    );
-
-    return response.status(HttpStatus.OK).json({ message: 'email testing' });
-  }
-
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new user.' })

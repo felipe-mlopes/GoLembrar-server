@@ -33,9 +33,3 @@ USER nestjs
 EXPOSE 3000
 
 CMD [ "node", "dist/src/main" ]
-
-FROM node:20-alpine AS dev
-
-WORKDIR /app
-
-CMD [ "npm", "run", "start:dev" ]
