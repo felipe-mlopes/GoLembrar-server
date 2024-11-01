@@ -6,6 +6,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma/ ./
 
-RUN npm i
+RUN npm ci
 
-CMD [ "npm", "run", "start:dev" ]
+EXPOSE 3000
+
+ENTRYPOINT [ "npm", "run", "start:host" ]

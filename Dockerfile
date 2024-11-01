@@ -5,9 +5,9 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma/ ./
 
-RUN npm ci
+RUN npm ci --only=production --ignore-scripts
 
-COPY . .
+COPY . ./
 
 RUN npm run build
 

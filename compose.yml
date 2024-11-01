@@ -3,15 +3,14 @@ services:
     container_name: goLembrar-api
     build:
       context: .
+      target: dev
       dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
     image: golembrar/api:1.0
-    env_file: ".env"
+    env_file: ".env.dev"
     volumes:
       - .:/app
-    networks:
-      - default
     depends_on:
       - golembrar-db
       - golembrar-cache
@@ -49,8 +48,6 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=test
       - RABBITMQ_DEFAULT_PASS=test
-    networks:
-      - default
     depends_on:
       - golembrar-db
 
@@ -62,15 +59,8 @@ services:
     environment:
       - KEYDB_REPLICATION_MODE=master
       - KEYDB_PASSWORD=pass123
-    networks:
-      - default
     volumes:
       - ./.docker/golembrar-cache/data:/var/lib/keydb-persistence:/bitnami
-
-networks:
-  default:
-    driver: bridge
-    name: golembrar
 
 volumes:
   golembrar-db:
