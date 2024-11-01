@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccessTokenGuard } from '../auth/guards/access-token/access-token.guard';
-import { EmailModule } from '../email/email.module';
 import { EmailService } from '../email/email.service';
 import { MailtrapService } from '../email/mailtrap/mailtrap.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -10,7 +9,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
 @Module({
-  imports: [RabbitmqModule, EmailModule],
+  imports: [RabbitmqModule],
   controllers: [UserController],
   providers: [
     UserService,

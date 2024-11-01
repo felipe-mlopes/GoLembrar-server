@@ -15,7 +15,6 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AccessTokenGuard } from '../auth/guards/access-token/access-token.guard';
 import { RequestWithUser } from '../common/utils/types/RequestWithUser';
-import { EmailService } from '../email/email.service';
 import { BadRequestResponse } from '../swagger/decorators/bad-request.decorator';
 import { ConflictResponse } from '../swagger/decorators/conflict.decorator';
 import { CreatedResponse } from '../swagger/decorators/created.decorator';
@@ -33,12 +32,10 @@ import { UserService } from './user.service';
 @Controller('user')
 @ApiTags('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly emailService: EmailService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post()
+  @ApiTags('auth')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new user.' })
   @CreatedResponse('User created response successfully', 'user created')
