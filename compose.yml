@@ -1,6 +1,27 @@
 services:
+  golembrar-api:
+    container_name: goLembrar-api
+    build:
+      target: dev
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    # image: golembrar/api:1.0
+    env_file: ".env"
+    networks:
+      - default
+    volumes:
+      - .:/app
+    depends_on:
+      - golembrar-db
+      - golembrar-cache
+      - golembrar-rabbitmq
+    restart: unless-stopped
+
   golembrar-db:
-    image: bitnami/postgresql
+    image: bitnami/postgresql:17.0.0
+    container_name: golembrar-db
     ports:
       - 5432:5432
     environment:
@@ -12,36 +33,40 @@ services:
     volumes:
       - ./.docker/golembrar-db/data:/var/lib/golembrar-db/:delegated
     healthcheck:
-      test:
-        ['CMD-SHELL', "psql -h localhost -U test -d golembrar -c 'SELECT 1;'"]
+      test: [ 'CMD-SHELL', "psql -h localhost -U test -d golembrar -c 'SELECT 1;'" ]
       interval: 5s
       timeout: 5s
       retries: 20
       start_period: 10s
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq-service
+  golembrar-rabbitmq:
+    image: rabbitmq:4.0-alpine
+    container_name: golembrar-rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - ./.docker/golembrar-rabbitmq/data:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=test
       - RABBITMQ_DEFAULT_PASS=test
+    networks:
+      - default
     depends_on:
       - golembrar-db
 
-  keydb-cache:
-    image: bitnami/keydb
+  golembrar-cache:
+    image: bitnami/keydb:6.3.4
+    container_name: golembrar-cache
     ports:
       - 6379:6379
     environment:
       - KEYDB_REPLICATION_MODE=master
       - KEYDB_PASSWORD=pass123
+    networks:
+      - default
     volumes:
-      - keydb_cache_data:/var/lib/keydb-persistence:/bitnami
+      - ./.docker/golembrar-cache/data:/var/lib/keydb-persistence:/bitnami
 
 networks:
   default:
@@ -50,5 +75,5 @@ networks:
 
 volumes:
   golembrar-db:
-  rabbitmq_data:
-  keydb_cache_data:
+  golembrar-rabbitmq:
+  golembrar-cache:
