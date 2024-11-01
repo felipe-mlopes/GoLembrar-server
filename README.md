@@ -1,99 +1,59 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+![BANNER](https://i.ibb.co/Hr6GrvF/golembrar.png)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 💭 Sobre o Projeto
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+O **goLembrar** é uma plataforma inovadora que facilita a organização e o envio de lembretes de forma automatizada. Ele gerencia desde as integrações de mensagem com diversas plataformas até o controle completo sobre agendamentos ou lembretes, oferecendo uma infraestrutura robusta para manter os usuários sempre atualizados e no controle de seus compromissos.
 
-## Description
+> [App](https://app.golembrar.com) ・ [Homepage](https://golembrar.com) ・ [GitHub](https://github.com/goLembrar/) ・ [LinkedIn](https://www.linkedin.com/company/golembrar)
 
-Para rodar a aplicação Nest e usar o banco de dados, é necessário ter o docker instalado 
-em seu computador.
+### Principais funcionalidades
 
-## Installation
+- **Integrações com mensageria**: Notificações via WhatsApp, E-mail, Telegram e Discord, com agendamentos personalizados para máxima flexibilidade.
 
-```bash
-$ npm install
-```
+- **Agendamento personalizado**: Controle completo sobre o envio de cada mensagem ou lembrete, com ajustes precisos de data, hora e destinatários. Garanta que cada notificação seja entregue no momento ideal, de forma totalmente alinhada às suas necessidades.
 
-## Running the app
+- **Escalabilidade com containers**: O backend está configurado para rodar em containers, garantindo uma infraestrutura escalável e de fácil manutenção.
 
-```bash
+> 📜 Explore a [Documentação do goLembrar](https://api.golembrar.com) para acessar detalhes sobre os endpoints da api.
 
+---
 
-# Banco de dados
-# OBS: certifique-se de estar no diretório do projeto no seu terminal
+## 🔥 Como Rodar localmente
 
-$ docker compose up -d # esse comando vai rodar o postgres no docker.
+Para executar o backend do goLembrar, siga as instruções abaixo:
 
-# OBRIGATÓRIO PARA SINCRONIZAR O BANCO DE DADOS EM DESENVOLVIMENTO
-$ npm run prisma-dev
+### Pré-requisitos
 
-# development
-$ npm run start
+- **Docker**: Certifique-se de que o [docker](https://www.docker.com/get-started) está instalado em sua máquina.
 
-# watch mode
-$ npm run start:dev
+- **Variáveis de ambiente**: Configure o arquivo `.env` com as variáveis necessárias para conectar aos serviços, como banco de dados, cache e mensageria.
 
-# production mode
-$ npm run start:prod
+### Passos para iniciar os serviços
 
-# Estúdio do prisma para ver o banco de dados no navegador
-$ npm run prisma-studio
+1. **Subindo os serviços com docker compose**:
 
-```
+   - Use o comando a seguir para iniciar todos os serviços descritos no `compose.yml`. Estes incluem: banco de dados, cache e mensageria, todos em containers docker, criando um ambiente isolado e consistente.
 
-## Stopping the app
+   ```sh
+   $ docker compose up
+   # ou para rodar em segundo plano
+   docker compose up -d
+   ```
 
-```bash
-# Para parar o Postgres no docker é só rodar o comando abaixo
-$ docker compose down
+2. **Em execução**:
 
-# OBS: certifique-se de estar no diretório do projeto no seu terminal
+   - Com todos os containers em execução, a api estará disponível para requisições em [http://localhost:3000](http://localhost:3000).
 
-```
+---
 
+## 🚀 Estrutura de serviços no docker compose
 
-## Test
+O `compose.yml` inclui os seguintes serviços:
 
-```bash
-# unit tests
-$ npm run test
+- **API**: Serviço principal que processa requisições e gerencia o fluxo de dados dos lembretes.
 
-# e2e tests
-$ npm run test:e2e
+- **PostgreSQL**: Banco de dados relacional utilizado para armazenar os dados dos lembretes, usuários e configurações.
 
-# test coverage
-$ npm run test:cov
-```
+- **KeyDB**: Cache de alta performance para otimizar o acesso a dados frequentes e melhorar a performance geral da aplicação.
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- **RabbitMQ**: Sistema de mensageria que coordena o envio assíncrono de notificações entre a api e os canais de mensagens.
