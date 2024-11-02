@@ -1,8 +1,8 @@
 ![BANNER](https://i.ibb.co/Hr6GrvF/golembrar.png)
 
-## 💭 Sobre o Projeto
+## 💭 Sobre o projeto
 
-O **goLembrar** é uma plataforma inovadora que facilita a organização e o envio de lembretes de forma automatizada. Ele gerencia desde as integrações de mensagem com diversas plataformas até o controle completo sobre agendamentos ou lembretes, oferecendo uma infraestrutura robusta para manter os usuários sempre atualizados e no controle de seus compromissos.
+O "**goLembrar**" é uma plataforma inovadora que facilita a organização e o envio de lembretes de forma automatizada. Ele gerencia desde as integrações de mensagem com diversas plataformas até o controle completo sobre agendamentos ou lembretes, oferecendo uma infraestrutura robusta para manter os usuários sempre atualizados e no controle de seus compromissos.
 
 > [App](https://app.golembrar.com) ・ [Homepage](https://golembrar.com) ・ [GitHub](https://github.com/goLembrar/) ・ [LinkedIn](https://www.linkedin.com/company/golembrar)
 
@@ -14,11 +14,11 @@ O **goLembrar** é uma plataforma inovadora que facilita a organização e o env
 
 - **Escalabilidade com containers**: O backend está configurado para rodar em containers, garantindo uma infraestrutura escalável e de fácil manutenção.
 
-> 📜 Explore a [Documentação do goLembrar](https://api.golembrar.com) para acessar detalhes sobre os endpoints da api.
+> 📜 Explore a [Documentação do goLembrar](https://api.golembrar.com) para acessar detalhes sobre os endpoints da Api.
 
 ---
 
-## 🔥 Como Rodar localmente
+## 🔥 Como rodar localmente
 
 Para executar o backend do goLembrar, siga as instruções abaixo:
 
@@ -26,7 +26,7 @@ Para executar o backend do goLembrar, siga as instruções abaixo:
 
 - **Docker**: Certifique-se de que o [docker](https://www.docker.com/get-started) está instalado em sua máquina.
 
-- **Variáveis de ambiente**: Configure o arquivo `.env` com as variáveis necessárias para conectar aos serviços, como banco de dados, cache e mensageria.
+- **Variáveis de Ambiente**: Crie o arquivo `.env.dev` a partir do `.env.example` com as variáveis necessárias para conexão aos serviços, como banco de dados, cache e mensageria. Utilize o nome dos containers no lugar de "localhost" para que o Docker resolva automaticamente o IP correto de cada serviço.
 
 ### Passos para iniciar os serviços
 
@@ -35,14 +35,26 @@ Para executar o backend do goLembrar, siga as instruções abaixo:
    - Use o comando a seguir para iniciar todos os serviços descritos no `compose.yml`. Estes incluem: banco de dados, cache e mensageria, todos em containers docker, criando um ambiente isolado e consistente.
 
    ```sh
-   $ docker compose up
-   # ou para rodar em segundo plano
    docker compose up -d
    ```
 
-2. **Em execução**:
+   <br>
 
-   - Com todos os containers em execução, a api estará disponível para requisições em [http://localhost:3000](http://localhost:3000).
+2. **Aplicando as migrations**
+
+   - Execute o comando abaixo para aplicar as migrations e preparar o banco de dados com as tabelas necessárias para o funcionamento da Api:
+
+   ```sh
+   npm run prisma migrate dev
+   ```
+
+   Isso garantirá que o banco de dados esteja configurado corretamente para o uso.
+
+   <br>
+
+3. **Em execução**:
+
+   - Com todos os containers em execução, a Api estará disponível para requisições em [http://localhost:3000](http://localhost:3000).
 
 ---
 
@@ -56,4 +68,4 @@ O `compose.yml` inclui os seguintes serviços:
 
 - **KeyDB**: Cache de alta performance para otimizar o acesso a dados frequentes e melhorar a performance geral da aplicação.
 
-- **RabbitMQ**: Sistema de mensageria que coordena o envio assíncrono de notificações entre a api e os canais de mensagens.
+- **RabbitMQ**: Sistema de mensageria que coordena o envio assíncrono de notificações entre a Api e os canais de mensagens.

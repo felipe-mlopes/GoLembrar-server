@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM docker.io/library/node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN npm run build
 
 RUN npm prune --production
 
-FROM node:20-alpine AS production
+FROM docker.io/library/node:20-alpine AS production
 
 WORKDIR /app
 
