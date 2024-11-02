@@ -1,6 +1,6 @@
 services:
   golembrar-api:
-    container_name: goLembrar-api
+    container_name: golembrar-api
     build:
       context: .
       target: dev
@@ -31,7 +31,7 @@ services:
     volumes:
       - ./.docker/golembrar-db/data:/var/lib/golembrar-db/:delegated
     healthcheck:
-      test: [ 'CMD-SHELL', "psql -h localhost -U test -d golembrar -c 'SELECT 1;'" ]
+      test: [ "CMD-SHELL", "PGPASSWORD=test psql -h localhost -U test -d golembrar -c 'SELECT 1;'" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -52,7 +52,7 @@ services:
       - golembrar-db
 
   golembrar-cache:
-    image: docker.io/library/bitnami/keydb:6.3
+    image: docker.io/library/bitnami/keydb:6.3.4
     container_name: golembrar-cache
     ports:
       - 6379:6379

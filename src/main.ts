@@ -7,7 +7,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isDevelopment =
+    process.env.NODE_ENV === 'development' ? 'development' : 'production';
 
   const port = 3000;
 
@@ -17,9 +18,16 @@ async function bootstrap() {
 
   if (isDevelopment) {
     app.enableCors({
-      origin: 'http://localhost:4200',
+      origin: '*',
       methods: ['GET', 'HEAD', 'OPTIONS', 'POST', 'PATCH', 'DELETE'],
       credentials: true,
+      allowedHeaders: [
+        'Content-Type',
+        'Origin',
+        'X-Requested-With',
+        'Accept',
+        'Authorization',
+      ],
     });
   } else {
     app.enableCors({
@@ -89,11 +97,9 @@ async function bootstrap() {
   });
 
   app.listen(port).then(() => {
-    console.log(
-      `
-📅 goLembrar Api running at: ${apiUrl}
-      `,
-    );
+    console.log(`
+🕒 goLembrar Api running at: ${apiUrl}
+  `);
   });
 }
 

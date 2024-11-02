@@ -30,7 +30,7 @@
     "start:dev": "nest start --watch",
     "start:host": "nest start --watch --host=0.0.0.0",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main.js",
+    "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "vitest run",

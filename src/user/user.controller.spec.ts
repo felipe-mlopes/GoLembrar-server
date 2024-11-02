@@ -138,9 +138,6 @@ describe('UserController', () => {
         mockResponse as Response,
       );
       expect(mockResponse.status).toHaveBeenCalledWith(204);
-      //  expect(mockResponse.json).toHaveBeenCalledWith({
-      //    message: 'user created',
-      //  });
     });
   });
 

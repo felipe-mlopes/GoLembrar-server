@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import * as redisStore from 'cache-manager-redis-store';
+import redisStore from 'cache-manager-redis-store';
 import { join } from 'path';
 import type { RedisClientOptions } from 'redis';
 import { AppController } from './app.controller';
@@ -42,9 +42,9 @@ import { UserModule } from './user/user.module';
     CacheModule.register<RedisClientOptions>({
       isGlobal: true,
       store: redisStore,
-      host: process.env.KEYDB_HOST,
-      port: parseInt(process.env.KEYDB_PORT, 10) || 6379,
-      password: process.env.KEYDB_PASSWORD,
+      host: process.env.CACHE_HOST,
+      port: parseInt(process.env.CACHE_PORT, 10) || 6379,
+      password: process.env.CACHE_PASSWORD,
     }),
   ],
   controllers: [AppController],
