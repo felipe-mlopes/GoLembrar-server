@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
 
   golembrar-db:
-    image: docker.io/library/bitnami/postgresql:17.0.0
+    image: docker.io/bitnami/postgresql:17.0.0
     container_name: golembrar-db
     ports:
       - 5432:5432
@@ -38,7 +38,7 @@ services:
       start_period: 10s
 
   golembrar-rabbitmq:
-    image: docker.io/library/rabbitmq:4.0-alpine
+    image: docker.io/rabbitmq:4.0-alpine
     container_name: golembrar-rabbitmq
     ports:
       - 5672:5672
@@ -52,7 +52,7 @@ services:
       - golembrar-db
 
   golembrar-cache:
-    image: docker.io/library/bitnami/keydb:6.3.4
+    image: docker.io/bitnami/keydb:6.3.4
     container_name: golembrar-cache
     ports:
       - 6379:6379

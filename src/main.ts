@@ -21,13 +21,6 @@ async function bootstrap() {
       origin: '*',
       methods: ['GET', 'HEAD', 'OPTIONS', 'POST', 'PATCH', 'DELETE'],
       credentials: true,
-      allowedHeaders: [
-        'Content-Type',
-        'Origin',
-        'X-Requested-With',
-        'Accept',
-        'Authorization',
-      ],
     });
   } else {
     app.enableCors({
@@ -98,7 +91,7 @@ async function bootstrap() {
 
   app.listen(port).then(() => {
     console.log(`
-🕒 goLembrar Api running at: ${apiUrl}
+📅 goLembrar API is on: ${apiUrl}
   `);
   });
 }

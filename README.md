@@ -1,10 +1,22 @@
-![BANNER](https://i.ibb.co/Hr6GrvF/golembrar.png)
+![BANNER](https://i.ibb.co/VJSdkHn/golembrar.png)
+
+<p align="center">
+<a href="https://app.golembrar.com" target="_blank">App</a>
+・
+<a href="https://golembrar.com" target="_blank">Homepage</a>
+・
+<a href="https://github.com/goLembrar" target="_blank">GitHub</a>
+・
+<a href="https://www.linkedin.com/company/golembrar" target="_blank">LinkedIn</a>
+</p>
+
+---
 
 ## 💭 Sobre o projeto
 
-O "**goLembrar**" é uma plataforma inovadora que facilita a organização e o envio de lembretes de forma automatizada. Ele gerencia desde as integrações de mensagem com diversas plataformas até o controle completo sobre agendamentos ou lembretes, oferecendo uma infraestrutura robusta para manter os usuários sempre atualizados e no controle de seus compromissos.
+**goLembrar** é uma plataforma inovadora que facilita a organização e o envio de lembretes de forma automatizada. Ele gerencia desde as integrações de mensagem com diversas plataformas até o controle completo sobre agendamentos ou lembretes, oferecendo uma infraestrutura robusta para manter os usuários sempre atualizados e no controle de seus compromissos.
 
-> [App](https://app.golembrar.com) ・ [Homepage](https://golembrar.com) ・ [GitHub](https://github.com/goLembrar/) ・ [LinkedIn](https://www.linkedin.com/company/golembrar)
+> 📜 Explore a [Documentação do goLembrar](https://api.golembrar.com) para acessar detalhes sobre os endpoints da API.
 
 ### Principais funcionalidades
 
@@ -14,13 +26,10 @@ O "**goLembrar**" é uma plataforma inovadora que facilita a organização e o e
 
 - **Escalabilidade com containers**: O backend está configurado para rodar em containers, garantindo uma infraestrutura escalável e de fácil manutenção.
 
-> 📜 Explore a [Documentação do goLembrar](https://api.golembrar.com) para acessar detalhes sobre os endpoints da Api.
-
----
-
 ## 🔥 Como rodar localmente
 
-Para executar o backend do goLembrar, siga as instruções abaixo:
+> [!WARNING]
+> Para executar o backend do goLembrar, siga as instruções abaixo:
 
 ### Pré-requisitos
 
@@ -56,7 +65,7 @@ Para executar o backend do goLembrar, siga as instruções abaixo:
 
    - Com todos os containers em execução, a Api estará disponível para requisições em [http://localhost:3000](http://localhost:3000).
 
----
+   <br>
 
 ## 🚀 Estrutura de serviços no docker compose
 

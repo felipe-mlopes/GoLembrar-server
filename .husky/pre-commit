@@ -1,4 +1,18 @@
+# Stash unstaged changes
+
+git stash --keep-index
+
+# Run lint, format and tests
+
 npm run lint
 npm run format
 npm run test
 git add -u .
+
+# Stage changes only for the previously staged files
+
+git add --update
+
+# Apply unstaged changes back
+
+git stash pop

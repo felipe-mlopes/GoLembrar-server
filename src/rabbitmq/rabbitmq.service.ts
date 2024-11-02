@@ -24,9 +24,9 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     try {
       this.connection = await amqp.connect(this.rabbitmqUrl);
       this.channel = await this.connection.createChannel();
-      console.log('Connected to RabbitMQ');
+      this.logger.log('Connected to RabbitMQ');
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to connect to RabbitMQ: ${this.rabbitmqUrl}`,
         error,
       );
@@ -35,7 +35,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
   public getChannel(): amqp.Channel {
     if (!this.channel) {
-      console.error('RabbitMQ channel is not established yet');
+      this.logger.error('RabbitMQ channel is not established yet');
     }
     return this.channel;
   }
