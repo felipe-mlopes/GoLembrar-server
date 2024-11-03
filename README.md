@@ -43,21 +43,26 @@
 
    - Use o comando a seguir para iniciar todos os serviços descritos no `compose.yml`. Estes incluem: banco de dados, cache e mensageria, todos em containers docker, criando um ambiente isolado e consistente.
 
+   <br>
+
    ```sh
    docker compose up -d
    ```
 
    <br>
 
+> [!IMPORTANT]
+> Isso garantirá que o banco de dados esteja configurado corretamente para o uso.
+
 2. **Aplicando as migrations**
 
    - Execute o comando abaixo para aplicar as migrations e preparar o banco de dados com as tabelas necessárias para o funcionamento da Api:
+   
+   <br>
 
    ```sh
    npm run prisma migrate dev
    ```
-
-   Isso garantirá que o banco de dados esteja configurado corretamente para o uso.
 
    <br>
 
