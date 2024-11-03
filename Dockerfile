@@ -1,34 +1,31 @@
-FROM docker.io/node:20-alpine AS builder
+FROM docker.io/node:20-slim AS deps
 
 WORKDIR /app
 
-COPY package*.json ./
-COPY prisma/ ./
+COPY package*.json .
+COPY prisma/ .
 
-RUN npm ci --only=production --ignore-scripts
+RUN npm ci --ignore-scripts
 
-COPY . ./
-
-RUN npm run build
-
-RUN npm prune --production
-
-FROM docker.io/node:20-alpine AS production
+FROM docker.io/node:20-slim AS builder
 
 WORKDIR /app
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+COPY --from=deps /app/node_modules .
+COPY --from=deps /app/package*.json .
+COPY . .
 
-ENV NODE_ENV=production
+RUN npm run build --ignore-scripts
+RUN npm run prisma-gen
+RUN npm prune --omit=dev
 
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nestjs -u 1001
+FROM docker.io/node:20-slim AS prod
 
-RUN chown -R nestjs:nodejs /app
+WORKDIR /app
 
-USER nestjs
+COPY --from=builder /app/dist .
+COPY --from=deps /app/package*.json .
+COPY prisma .
 
 EXPOSE 3000
 

@@ -1,6 +1,5 @@
 FROM docker.io/node:20-bookworm AS dev
 
-ENV NODE_ENV=development
 WORKDIR /app
 
 COPY package*.json ./

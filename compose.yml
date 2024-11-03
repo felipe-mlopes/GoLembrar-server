@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
-    image: golembrar/api:1.0
+    image: golembrar/api:dev
     env_file: ".env.dev"
     volumes:
       - .:/app
