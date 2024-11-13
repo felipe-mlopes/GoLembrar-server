@@ -1,26 +1,30 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   ForbiddenException,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { CacheService } from '../cache/cache.service';
+import { getDatesInISO } from '../common/utils/getDatesInISO';
+import { isValidScheduledDate } from '../common/utils/isValidScheduledDate';
+import { isWithinCurrentDay } from '../common/utils/isWithinCurrentDay';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateReminderDto } from './dto/create-reminder.dto';
-import { UpdateReminderDto } from './dto/update-reminder.dto';
-import { isValidScheduledDate } from '../common/utils/isValidScheduledDate';
 import { ReminderResponse } from './dto/scheduled-reminders.response.dto';
-import { CacheService } from '../cache/cache.service';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { isWithinCurrentDay } from '../common/utils/isWithinCurrentDay';
-import { getDatesInISO } from '../common/utils/getDatesInISO';
+import { UpdateReminderDto } from './dto/update-reminder.dto';
 
 @Injectable()
 export class ReminderService {
   constructor(
     private readonly prismaService: PrismaService,
+
     @Inject(CACHE_MANAGER) private readonly cacheService: CacheService,
   ) {}
+
+  private readonly logger = new Logger(ReminderService.name);
 
   private readonly scheduledReminderTimeLimit = 30;
 
@@ -94,7 +98,7 @@ export class ReminderService {
         r.scheduled AS reminder_scheduled,
         utr."contactId" AS contact_id,
         c.identify AS contact_identify,
-        c.channel AS contact_channel       
+        c.channel AS contact_channel
       FROM
         "users_to_reminders" AS utr
       INNER JOIN
@@ -111,8 +115,13 @@ export class ReminderService {
 
     // Salva cada lembrete pela data/horário, o canal e o ID no cache
     for (const scheduledReminder of scheduledReminders) {
-      const date = new Date(scheduledReminder.reminder_scheduled);
-      const key = `${date.toISOString()}_${scheduledReminder.contact_channel}_${scheduledReminder.id}`;
+      const reminderDate = new Date(
+        scheduledReminder.reminder_scheduled,
+      ).setSeconds(0, 0);
+
+      const date = new Date(reminderDate).toISOString();
+
+      const key = `${date}_${scheduledReminder.contact_channel}_${scheduledReminder.id}`;
 
       await this.cacheService.set(
         key,

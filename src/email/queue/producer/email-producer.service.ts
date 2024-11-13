@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CacheService } from '../../../cache/cache.service';
 import { Channel } from '@prisma/client';
-import { ReminderResponse } from '../../../reminder/dto/scheduled-reminders.response.dto';
+import { CacheService } from '../../../cache/cache.service';
 import { RabbitMQService } from '../../../rabbitmq/rabbitmq.service';
+import { ReminderResponse } from '../../../reminder/dto/scheduled-reminders.response.dto';
 
 @Injectable()
 export class EmailProducerService {
@@ -20,11 +20,11 @@ export class EmailProducerService {
   public async getScheduledEmailReminders(
     currentTimeKey: string,
   ): Promise<number> {
-    const queue = 'email_queue';
-    const cacheKey = currentTimeKey + '_' + Channel.EMAIL;
+    const queueName = 'email_queue';
+    const cacheEmailKey = currentTimeKey + '_' + Channel.EMAIL;
 
     const result = await this.cacheService.getAll();
-    const keys = result.filter((key) => key.startsWith(cacheKey));
+    const keys = result.filter((key) => key.startsWith(cacheEmailKey));
 
     let processedCount = 0;
 
@@ -33,7 +33,7 @@ export class EmailProducerService {
         const value: ReminderResponse[] = await this.cacheService.get(key);
 
         await this.rabbitmqService.sendToQueue(
-          queue,
+          queueName,
           Buffer.from(JSON.stringify(value)),
         );
 

@@ -59,10 +59,7 @@ services:
     environment:
       - KEYDB_REPLICATION_MODE=master
       - KEYDB_PASSWORD=pass123
-    volumes:
-      - ./.docker/golembrar-cache/data:/var/lib/keydb-persistence:/bitnami
 
 volumes:
   golembrar-db:
   golembrar-rabbitmq:
-  golembrar-cache:

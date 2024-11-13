@@ -1,32 +1,24 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ReminderService } from '../reminder/reminder.service';
 import { EmailProducerService } from '../email/queue/producer/email-producer.service';
-// import { ScheduledRemindersResponse } from '../reminder/dto/schedule-reminders.response.dto';
-import { EmailConsumerService } from '../email/queue/consumer/email-consumer.service';
-//import { EmailScheduledService } from '../email/email.service';
+import { ReminderService } from '../reminder/reminder.service';
 
 @Injectable()
-export class TasksService {
+export class TasksService implements OnModuleInit {
   constructor(
     private readonly reminderService: ReminderService,
     private readonly emailProducerService: EmailProducerService,
-    private readonly emailConsumerService: EmailConsumerService,
   ) {}
 
   private readonly logger = new Logger(TasksService.name);
-  private readonly offset = -3 * 60 * 60 * 1000; // -3 horas em milissegundos
   private delayInSendingToQueue = false;
-  private delayInGettingToQueue = false;
 
-  @Cron('0 0 * * *')
+  async onModuleInit() {
+    await this.getTodayEMails();
+  }
+
+  @Cron('0 0 * * *') // Gets all messages of day, everyday
   async getTodayEMails() {
-    //   const todayMails = await this.emailScheduledService.getEmailsDueToday();
-    //   this.logger.debug(
-    //     'getTodayEMails: Called when the current hour is 00:00. All the emails due today are: ',
-    //     JSON.stringify(todayMails),
-    //   );
-
     const { today, reminders } =
       await this.reminderService.getScheduledRemindersForToday();
 
@@ -35,42 +27,16 @@ export class TasksService {
     );
   }
 
-  // @Cron('* * * * *')
-  // async verifyIfTheresIsEmailToSend() {
-  //   await this.emailScheduledService.sendTodayEmails();
-  //   this.logger.debug('verifyIfTheresIsEmailToSend: Called every minute');
-  // }
-
-  // @Cron('0 8,13,18 * * *')
-  // async updateCache() {
-  //   await this.emailScheduledService.updateCache();
-  //   this.logger.debug('updateCache: Called every minute');
-  // }
-
-  @Cron('* * * * *') // Tarefa executada a cada minuto com delay de 100ms
+  @Cron('* * * * *') // Every minute with delay of 100ms
   async sendScheduledRemindersToQueueByChannelEveryMinute() {
-    const currentTime = Date.now();
-    const currentTimeWithoutOffset = new Date(
-      currentTime + this.offset,
-    ).setSeconds(0, 0);
-    const currentTimeFormatted = new Date(
-      currentTimeWithoutOffset,
-    ).toISOString();
+    const currentTime = new Date(new Date().setSeconds(0, 0)).toISOString();
 
     if (!this.delayInSendingToQueue) {
       this.delayInSendingToQueue = true;
       setTimeout(async () => {
-        await this.executeTaskToSendEmailQueue(currentTimeFormatted);
+        await this.executeTaskToSendEmailQueue(currentTime);
         this.delayInSendingToQueue = false; // Reset the delay execution flag
       }, 100);
-    }
-
-    if (!this.delayInGettingToQueue) {
-      this.delayInGettingToQueue = true;
-      setTimeout(async () => {
-        await this.emailConsumerService.getEmailScheduledRemindersOnQueue();
-        this.delayInGettingToQueue = false; // Reset the delay execution flag
-      }, 200);
     }
   }
 

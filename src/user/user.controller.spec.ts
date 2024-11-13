@@ -5,8 +5,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Response } from 'express';
 import { vi } from 'vitest';
 import { RequestWithUser } from '../common/utils/types/RequestWithUser';
-import { EmailService } from '../email/email.service';
-import { MailtrapService } from '../email/mailtrap/mailtrap.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -45,9 +43,7 @@ describe('UserController', () => {
       providers: [
         ConfigService,
         PrismaService,
-        EmailService,
         JwtService,
-        MailtrapService,
         {
           provide: UserService,
           useValue: mockUserService,

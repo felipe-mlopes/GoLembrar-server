@@ -4,9 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { vi } from 'vitest';
 import { CacheService } from '../cache/cache.service';
-import { EmailService } from '../email/email.service';
-import { MailtrapService } from '../email/mailtrap/mailtrap.service';
-import { EmailConsumerService } from '../email/queue/consumer/email-consumer.service';
 import { EmailProducerService } from '../email/queue/producer/email-producer.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { RabbitMQService } from '../rabbitmq/rabbitmq.service';
@@ -23,13 +20,10 @@ describe('TasksService', () => {
         TasksService,
         ReminderService,
         EmailProducerService,
-        EmailConsumerService,
         PrismaService,
         CacheService,
         { provide: CACHE_MANAGER, useValue: {} },
         RabbitMQService,
-        EmailService,
-        MailtrapService,
         { provide: MAILER_OPTIONS, useValue: {} },
         {
           provide: MailerService,

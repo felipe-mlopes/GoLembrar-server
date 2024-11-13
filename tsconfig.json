@@ -17,5 +17,5 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src/**/*", "consumer-queue-email", "vitest.config.ts"]
+  "include": ["src/**/*", "vitest.config.ts"]
 }
