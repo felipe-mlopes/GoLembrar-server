@@ -90,12 +90,12 @@ export class ReminderService {
       .$queryRaw`
       SELECT
         utr.id AS id,
-        utr."reminderId" AS reminder_id,
-        r.title AS reminder_title,
-        r.description AS reminder_description,
-        utr.status AS reminder_status,
-        utr."createdAt" AS reminder_created_at,
-        r.scheduled AS reminder_scheduled,
+        utr."reminderId" AS message_id,
+        r.title AS message_title,
+        r.description AS message_description,
+        utr.status AS message_status,
+        utr."createdAt" AS message_created_at,
+        r.scheduled AS message_scheduled,
         utr."contactId" AS contact_id,
         c.identify AS contact_identify,
         c.channel AS contact_channel
@@ -116,7 +116,7 @@ export class ReminderService {
     // Salva cada lembrete pela data/horário, o canal e o ID no cache
     for (const scheduledReminder of scheduledReminders) {
       const reminderDate = new Date(
-        scheduledReminder.reminder_scheduled,
+        scheduledReminder.message_scheduled,
       ).setSeconds(0, 0);
 
       const date = new Date(reminderDate).toISOString();
