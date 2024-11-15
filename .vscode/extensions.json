@@ -5,6 +5,6 @@
     "prisma.prisma",
     "esbenp.prettier-vscode",
     "ms-azuretools.vscode-docker",
-    "dotenv.dotenv-vscode"
+    "socheatsok78-lab.dotenv-vscode-stripped"
   ]
 }

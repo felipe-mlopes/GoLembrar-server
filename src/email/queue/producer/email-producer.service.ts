@@ -38,6 +38,9 @@ export class EmailProducerService {
         );
 
         processedCount++;
+
+        // Add a delay of 1s between each sendToQueue call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 

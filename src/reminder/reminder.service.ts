@@ -98,13 +98,17 @@ export class ReminderService {
         r.scheduled AS message_scheduled,
         utr."contactId" AS contact_id,
         c.identify AS contact_identify,
-        c.channel AS contact_channel
+        c.channel AS contact_channel,
+        u.email AS owner_email,
+        r."ownerId" AS owner_id
       FROM
         "users_to_reminders" AS utr
       INNER JOIN
         contacts AS c ON utr."contactId" = c.id
       INNER JOIN
         reminders AS r ON utr."reminderId" = r.id
+      INNER JOIN
+        users AS u ON r."ownerId" = u.id
       WHERE
         EXTRACT(EPOCH FROM r.scheduled) BETWEEN ${startOfDayOnDb} AND ${endOfDayOnDb}
         AND utr.status = 'PENDING'
@@ -263,16 +267,6 @@ export class ReminderService {
 
     if (!reminder) {
       throw new NotFoundException('Não foi possível encontrar o lembrete');
-    }
-
-    const scheduledReminder = new Date(reminder.scheduled);
-    const offset = -3 * 60 * 60 * 1000; // -3 horas em milissegundos
-    const now = new Date().setSeconds(0, 0) + offset;
-
-    if (scheduledReminder.getTime() < now) {
-      throw new BadRequestException(
-        'Não é permitido atualizar um lembrete com a data inferior a data corrente',
-      );
     }
 
     // Verifica se os contatos informados foram alterados, caso sim, se eles existem no banco
