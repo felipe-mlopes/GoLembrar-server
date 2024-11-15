@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   HttpStatus,
   Param,
   Patch,
@@ -17,18 +18,18 @@ import { AccessTokenGuard } from '../auth/guards/access-token/access-token.guard
 import { RequestWithUser } from '../common/utils/types/RequestWithUser';
 import { CreatedResponse } from '../swagger/decorators/created.decorator';
 import { ForbiddenResponse } from '../swagger/decorators/forbidden.decorator';
+import { NoContentResponse } from '../swagger/decorators/no-content.decorator';
+import { NotFoundResponse } from '../swagger/decorators/not-found.decorator';
 import { OkResponse } from '../swagger/decorators/ok.decorator';
 import { UnauthorizedResponse } from '../swagger/decorators/unauthorized.decorator';
 import { CreateReminderDto } from './dto/create-reminder.dto';
+import { MarkAsDto } from './dto/mark-as/mark-as.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
 import { ReminderService } from './reminder.service';
 import { GetReminderResponse } from './swagger/getReminderResponse.swagger';
-import { NotFoundResponse } from '../swagger/decorators/not-found.decorator';
-import { NoContentResponse } from '../swagger/decorators/no-content.decorator';
 
 @Controller('reminder')
 @ApiTags('reminder')
-@UseGuards(AccessTokenGuard)
 @ApiBearerAuth('JWT-Token')
 export class ReminderController {
   constructor(private readonly reminderService: ReminderService) {}
@@ -38,6 +39,7 @@ export class ReminderController {
   @OkResponse('Reminder found response successfully', GetReminderResponse)
   @UnauthorizedResponse()
   @NotFoundResponse()
+  @UseGuards(AccessTokenGuard)
   async findOneById(@Param('id') id: string) {
     return await this.reminderService.getReminderById(id);
   }
@@ -46,6 +48,7 @@ export class ReminderController {
   @ApiOperation({ summary: 'Get all reminders from user' })
   @OkResponse('Reminders found response successfully', [GetReminderResponse])
   @UnauthorizedResponse()
+  @UseGuards(AccessTokenGuard)
   async findManyByUser(@Req() request: RequestWithUser) {
     const userId: string = request.user['sub'];
     return this.reminderService.getUserReminders(userId);
@@ -74,6 +77,7 @@ export class ReminderController {
   @NoContentResponse('Reminder updated response successfully')
   @UnauthorizedResponse()
   @ForbiddenResponse()
+  @UseGuards(AccessTokenGuard)
   async update(
     @Param('id') id: string,
     @Body() updateReminderDto: UpdateReminderDto,
@@ -90,6 +94,7 @@ export class ReminderController {
   @OkResponse('Reminders removed response successfully')
   @UnauthorizedResponse()
   @ForbiddenResponse()
+  @UseGuards(AccessTokenGuard)
   async removeAll(@Req() request: RequestWithUser, @Res() response: Response) {
     const userId: string = request.user['sub'];
     await this.reminderService.removeAll(userId);
@@ -103,6 +108,7 @@ export class ReminderController {
   @OkResponse('Reminder removed response successfully')
   @UnauthorizedResponse()
   @ForbiddenResponse()
+  @UseGuards(AccessTokenGuard)
   async remove(
     @Param('id') id: string,
     @Req() request: RequestWithUser,
@@ -113,5 +119,13 @@ export class ReminderController {
     return response.status(HttpStatus.OK).json({
       message: 'reminder removed',
     });
+  }
+
+  @Post('mark-as')
+  @ApiOperation({ summary: 'Change status reminders by IDs' })
+  @HttpCode(HttpStatus.OK)
+  async markAsSent(@Body() dto: MarkAsDto, @Res() res: Response) {
+    await this.reminderService.changeAllMessageStatus(dto);
+    res.json(`All messages mark as ${dto.status}`);
   }
 }

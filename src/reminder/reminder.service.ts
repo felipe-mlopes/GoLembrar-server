@@ -15,6 +15,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { ReminderResponse } from './dto/scheduled-reminders.response.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
+import { MarkMessageAs } from './interfaces/mark-message-as-sent';
 
 @Injectable()
 export class ReminderService {
@@ -433,5 +434,18 @@ export class ReminderService {
     });
 
     return true;
+  }
+
+  public async changeAllMessageStatus(props: MarkMessageAs) {
+    await this.prismaService.usersToReminder.updateMany({
+      where: {
+        id: {
+          in: props.ids,
+        },
+      },
+      data: {
+        status: props.status,
+      },
+    });
   }
 }
