@@ -184,6 +184,11 @@ export class ReminderService {
             },
           },
         },
+        owner: {
+          select: {
+            email: true,
+          },
+        },
       },
     });
 
@@ -197,14 +202,15 @@ export class ReminderService {
 
       for (const userToReminder of newReminder.usersToReminder) {
         const key = `${dateFormatted.toISOString()}_${userToReminder.contact.channel}_${userToReminder.id}`;
-        const value = {
+        const value: ReminderResponse = {
           id: userToReminder.id,
-          reminder_id: newReminder.id,
-          reminder_title: newReminder.title,
-          reminder_description: newReminder.description,
-          reminder_status: userToReminder.status,
-          reminder_created_at: newReminder.createdAt,
-          reminder_schedule: newReminder.scheduled,
+          message_id: newReminder.id,
+          message_title: newReminder.title,
+          message_description: newReminder.description,
+          message_status: userToReminder.status,
+          message_created_at: newReminder.createdAt,
+          message_scheduled: newReminder.scheduled,
+          owner_email: newReminder.owner.email,
           contact_id: userToReminder.contact.id,
           contact_identify: userToReminder.contact.identify,
           contact_channel: userToReminder.contact.channel,

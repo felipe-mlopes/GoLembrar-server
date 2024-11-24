@@ -6,8 +6,8 @@ export interface ReminderResponse {
   message_title: string;
   message_description: string;
   message_status: Status;
-  message_created_at: string;
-  message_scheduled: string;
+  message_created_at: string | Date;
+  message_scheduled: string | Date;
   owner_email: string;
   contact_id: string;
   contact_identify: string;

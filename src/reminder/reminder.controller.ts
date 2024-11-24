@@ -30,7 +30,6 @@ import { GetReminderResponse } from './swagger/getReminderResponse.swagger';
 
 @Controller('reminder')
 @ApiTags('reminder')
-@ApiBearerAuth('JWT-Token')
 export class ReminderController {
   constructor(private readonly reminderService: ReminderService) {}
 
@@ -40,6 +39,7 @@ export class ReminderController {
   @UnauthorizedResponse()
   @NotFoundResponse()
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('JWT-Token')
   async findOneById(@Param('id') id: string) {
     return await this.reminderService.getReminderById(id);
   }
@@ -49,6 +49,7 @@ export class ReminderController {
   @OkResponse('Reminders found response successfully', [GetReminderResponse])
   @UnauthorizedResponse()
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('JWT-Token')
   async findManyByUser(@Req() request: RequestWithUser) {
     const userId: string = request.user['sub'];
     return this.reminderService.getUserReminders(userId);
@@ -56,6 +57,7 @@ export class ReminderController {
 
   @Post('')
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('JWT-Token')
   @ApiOperation({ summary: 'Create a new reminder.' })
   @CreatedResponse('Reminder created response successfully', 'reminder created')
   @UnauthorizedResponse()
@@ -78,6 +80,7 @@ export class ReminderController {
   @UnauthorizedResponse()
   @ForbiddenResponse()
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('JWT-Token')
   async update(
     @Param('id') id: string,
     @Body() updateReminderDto: UpdateReminderDto,
@@ -95,6 +98,7 @@ export class ReminderController {
   @UnauthorizedResponse()
   @ForbiddenResponse()
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('JWT-Token')
   async removeAll(@Req() request: RequestWithUser, @Res() response: Response) {
     const userId: string = request.user['sub'];
     await this.reminderService.removeAll(userId);
@@ -109,6 +113,7 @@ export class ReminderController {
   @UnauthorizedResponse()
   @ForbiddenResponse()
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('JWT-Token')
   async remove(
     @Param('id') id: string,
     @Req() request: RequestWithUser,
