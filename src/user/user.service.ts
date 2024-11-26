@@ -30,7 +30,7 @@ export class UserService {
 
     if (!passwordValidation) {
       throw new BadRequestException(
-        'A senha deve ter entre 6 e 24 caracteres e pelo menos uma letra maiúscula.',
+        'A senha deve ter entre 6 e 25 caracteres e pelo menos uma letra maiúscula.',
       );
     }
 

@@ -1,7 +1,10 @@
+import { MAILER_OPTIONS, MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Users } from '@prisma/client';
+import { Response } from 'express';
 import { vi } from 'vitest';
+import { RequestWithUser } from '../common/utils/types/RequestWithUser';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,40 +15,43 @@ describe('UserController', () => {
   let controller: UserController;
   let userService: UserService;
 
-  const mockUserService: Partial<Users | null>[] = [
-    {
+  const mockUserService = {
+    findOne: vi.fn().mockResolvedValue({
       id: '00000000-0000-0000-0000-000000000001',
       email: 'user1@email.com',
-      password: '123',
       createdAt: new Date(),
       updatedAt: new Date(),
-    },
-    {
+    }),
+    create: vi.fn().mockResolvedValue({
       id: '00000000-0000-0000-0000-000000000002',
       email: 'user2@email.com',
-      password: '123',
       createdAt: new Date(),
       updatedAt: new Date(),
-    },
-  ];
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { password, ...withoutPass } = mockUserService[0];
+    }),
+    update: vi.fn().mockResolvedValue({
+      id: '00000000-0000-0000-0000-000000000001',
+      email: 'user123@email.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
+    remove: vi.fn().mockResolvedValue(undefined),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
       providers: [
+        ConfigService,
         PrismaService,
         JwtService,
         {
           provide: UserService,
-          useValue: {
-            findOne: async () => withoutPass,
-            create: async () => mockUserService[1],
-            update: async () => mockUserService[0],
-            remove: async () => {},
-          },
+          useValue: mockUserService,
+        },
+        { provide: MAILER_OPTIONS, useValue: {} },
+        {
+          provide: MailerService,
+          useValue: { sendMail: vi.fn() },
         },
       ],
     }).compile();
@@ -60,25 +66,27 @@ describe('UserController', () => {
   });
 
   describe('findOne', () => {
-    it('should return a user in current section', async () => {
-      const userExpected = withoutPass;
+    it('should return a user in current session', async () => {
+      const userExpected = await mockUserService.findOne();
 
-      const user = await controller.findOne({ user: { id: userExpected.id } });
+      const user = await controller.findOne({
+        user: { sub: userExpected.id },
+      } as RequestWithUser);
+
       expect(user).toEqual(userExpected);
       expect(user).not.toHaveProperty('password');
     });
 
     it('should return a 404 error', async () => {
-      vi.spyOn(UserService.prototype, 'findOne').mockImplementation(() =>
-        Promise.reject(new Error('User not found')),
+      mockUserService.findOne.mockRejectedValueOnce(
+        new Error('User not found'),
       );
 
-      // Sim, isso funciona testando a exceção, mas não testando se a exceção foi lançada
-      try {
-        await controller.findOne({ user: { id: 3 } });
-      } catch (error) {
-        expect(error.message).toBe('User not found');
-      }
+      await expect(
+        controller.findOne({
+          user: { sub: 'nonexistent-id' },
+        } as RequestWithUser),
+      ).rejects.toThrow('User not found');
     });
   });
 
@@ -87,38 +95,57 @@ describe('UserController', () => {
       const userExpected = mockUserService[1];
 
       const userToCreate: CreateUserDto = {
-        email: 'user2@email.com',
-        password: '123',
+        name: 'any_name',
+        email: 'email@example.com',
+        password: '123456AAA',
       };
-      const user = await controller.create(userToCreate);
 
-      expect(user).toEqual(userExpected);
+      const mockResponse = {
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await controller.create(userToCreate, mockResponse as Response);
+
+      expect(mockResponse.status).toHaveBeenCalledWith(201);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        message: 'user created',
+      });
     });
   });
 
   describe('update', () => {
     it('should update a user', async () => {
-      const userExpected = mockUserService[0];
+      const userExpected = await mockUserService.update();
 
       const userToUpdate: UpdateUserDto = {
         email: 'user123@email.com',
         password: '1234',
       };
 
+      const mockResponse = {
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn().mockReturnThis(),
+      } as unknown as Response;
+
       const user = await controller.update(
-        { user: { id: userExpected.id } },
+        { user: { sub: userExpected.id } } as RequestWithUser,
         userToUpdate,
+        mockResponse as Response,
       );
-      expect(user).toEqual(userExpected);
+      expect(mockResponse.status).toHaveBeenCalledWith(204);
     });
   });
 
   describe('remove', () => {
     it('should remove a user', async () => {
-      const idExpected = mockUserService[0];
+      const idExpected = mockUserService.findOne().id;
 
-      const user = await controller.remove({ user: { id: idExpected } });
+      const user = await controller.remove({
+        user: { sub: idExpected },
+      } as RequestWithUser);
       expect(user).toBeUndefined();
+      expect(mockUserService.remove).toHaveBeenCalledWith(idExpected);
     });
   });
 });

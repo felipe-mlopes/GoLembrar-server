@@ -1,13 +1,18 @@
 export function isWithinCurrentDay(date: Date): boolean {
-  const today = new Date();
-  const nextDay = today.setDate(today.getDate() + 1);
-  const offset = -3 * 60 * 60 * 1000; // -3 horas em milissegundos
+  // Ensure we have a Date object from the input
+  const inputDate = new Date(date);
 
-  const nextDayFormatted = new Date(nextDay);
-  nextDayFormatted.setHours(0, 0, 0, 0);
-  const nextDayWithoutOffset = new Date(nextDayFormatted.getTime() + offset);
+  // Format both dates to Brasilia timezone, keeping only the date part
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
 
-  const dateFormatted = new Date(date);
+  const inputDateStr = formatter.format(inputDate);
+  const todayStr = formatter.format(new Date());
 
-  return dateFormatted < nextDayWithoutOffset;
+  // Compare the formatted dates
+  return inputDateStr === todayStr;
 }

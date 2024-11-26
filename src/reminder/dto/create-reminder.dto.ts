@@ -3,8 +3,10 @@ import {
   ArrayNotEmpty,
   ArrayUnique,
   IsArray,
+  IsBoolean,
   IsDateString,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
   MaxLength,
@@ -30,6 +32,10 @@ export class CreateReminderDto {
   @IsDateString()
   @ApiProperty({ example: '2021-09-01T00:00:00.000Z' })
   scheduled: Date;
+
+  @IsOptional()
+  @IsBoolean()
+  now: boolean;
 
   @IsNotEmpty()
   @IsArray()

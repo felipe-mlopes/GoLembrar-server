@@ -1,0 +1,12 @@
+FROM docker.io/node:20-bookworm AS dev
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY prisma/ ./
+
+RUN npm install
+
+EXPOSE 3000
+
+ENTRYPOINT [ "npm", "run", "start:host" ]

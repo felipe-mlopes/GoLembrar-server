@@ -1,17 +1,24 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as basicAuth from 'express-basic-auth';
+import basicAuth from 'express-basic-auth';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isDevelopment =
+    process.env.NODE_ENV === 'development' ? 'development' : 'production';
+
+  const port = 3000;
+
+  const apiUrl = isDevelopment
+    ? `http://localhost:${port}`
+    : 'https://api.golembrar.com';
 
   if (isDevelopment) {
     app.enableCors({
-      origin: 'http://localhost:4200',
+      origin: '*',
       methods: ['GET', 'HEAD', 'OPTIONS', 'POST', 'PATCH', 'DELETE'],
       credentials: true,
     });
@@ -46,8 +53,8 @@ async function bootstrap() {
   }
 
   const config = new DocumentBuilder()
-    .setTitle('GoLembrar API')
-    .setDescription('O APP de lembretes que você recebe no seu WhatsApp.')
+    .setTitle('goLembrar Api')
+    .setDescription('O app de lembretes que você recebe no seu WhatsApp.')
     .setVersion('0.1')
     .addBearerAuth(
       {
@@ -75,33 +82,17 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document, {
-    customSiteTitle: 'GoLembrar API',
+    customSiteTitle: 'goLembrar Api',
     swaggerOptions: {
       tagsSorter: 'alpha',
       operationsSorter: 'alpha',
     },
-    customfavIcon:
-      'https://avatars.githubusercontent.com/u/153030624?s=200&v=4',
-    customJs: [
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.14/swagger-ui-bundle.min.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.14/swagger-ui-bundle.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.14/swagger-ui-standalone-preset.js',
-    ],
-    customCssUrl: [
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.14/swagger-ui.min.css',
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.14/swagger-ui.css',
-    ],
   });
 
-  const port = 3000;
   app.listen(port).then(() => {
-    console.log(
-      `
-      ==================================================
-      📅 GoLembrar API running at: http://localhost:${port}
-      ==================================================
-      `,
-    );
+    console.log(`
+📅 goLembrar API is on: ${apiUrl}
+  `);
   });
 }
 

@@ -1,26 +1,31 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   ForbiddenException,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { CacheService } from '../cache/cache.service';
+import { getDatesInISO } from '../common/utils/getDatesInISO';
+import { isValidScheduledDate } from '../common/utils/isValidScheduledDate';
+import { isWithinCurrentDay } from '../common/utils/isWithinCurrentDay';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateReminderDto } from './dto/create-reminder.dto';
-import { UpdateReminderDto } from './dto/update-reminder.dto';
-import { isValidScheduledDate } from '../common/utils/isValidScheduledDate';
 import { ReminderResponse } from './dto/scheduled-reminders.response.dto';
-import { CacheService } from '../cache/cache.service';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { isWithinCurrentDay } from '../common/utils/isWithinCurrentDay';
-import { getDatesInISO } from '../common/utils/getDatesInISO';
+import { UpdateReminderDto } from './dto/update-reminder.dto';
+import { MarkMessageAs } from './interfaces/mark-message-as-sent';
 
 @Injectable()
 export class ReminderService {
   constructor(
     private readonly prismaService: PrismaService,
+
     @Inject(CACHE_MANAGER) private readonly cacheService: CacheService,
   ) {}
+
+  private readonly logger = new Logger(ReminderService.name);
 
   private readonly scheduledReminderTimeLimit = 30;
 
@@ -86,21 +91,25 @@ export class ReminderService {
       .$queryRaw`
       SELECT
         utr.id AS id,
-        utr."reminderId" AS reminder_id,
-        r.title AS reminder_title,
-        r.description AS reminder_description,
-        utr.status AS reminder_status,
-        utr."createdAt" AS reminder_created_at,
-        r.scheduled AS reminder_scheduled,
+        utr."reminderId" AS message_id,
+        r.title AS message_title,
+        r.description AS message_description,
+        utr.status AS message_status,
+        utr."createdAt" AS message_created_at,
+        r.scheduled AS message_scheduled,
         utr."contactId" AS contact_id,
         c.identify AS contact_identify,
-        c.channel AS contact_channel       
+        c.channel AS contact_channel,
+        u.email AS owner_email,
+        r."ownerId" AS owner_id
       FROM
         "users_to_reminders" AS utr
       INNER JOIN
         contacts AS c ON utr."contactId" = c.id
       INNER JOIN
         reminders AS r ON utr."reminderId" = r.id
+      INNER JOIN
+        users AS u ON r."ownerId" = u.id
       WHERE
         EXTRACT(EPOCH FROM r.scheduled) BETWEEN ${startOfDayOnDb} AND ${endOfDayOnDb}
         AND utr.status = 'PENDING'
@@ -111,8 +120,13 @@ export class ReminderService {
 
     // Salva cada lembrete pela data/horário, o canal e o ID no cache
     for (const scheduledReminder of scheduledReminders) {
-      const date = new Date(scheduledReminder.reminder_scheduled);
-      const key = `${date.toISOString()}_${scheduledReminder.contact_channel}_${scheduledReminder.id}`;
+      const reminderDate = new Date(
+        scheduledReminder.message_scheduled,
+      ).setSeconds(0, 0);
+
+      const date = new Date(reminderDate).toISOString();
+
+      const key = `${date}_${scheduledReminder.contact_channel}_${scheduledReminder.id}`;
 
       await this.cacheService.set(
         key,
@@ -170,6 +184,11 @@ export class ReminderService {
             },
           },
         },
+        owner: {
+          select: {
+            email: true,
+          },
+        },
       },
     });
 
@@ -183,14 +202,15 @@ export class ReminderService {
 
       for (const userToReminder of newReminder.usersToReminder) {
         const key = `${dateFormatted.toISOString()}_${userToReminder.contact.channel}_${userToReminder.id}`;
-        const value = {
+        const value: ReminderResponse = {
           id: userToReminder.id,
-          reminder_id: newReminder.id,
-          reminder_title: newReminder.title,
-          reminder_description: newReminder.description,
-          reminder_status: userToReminder.status,
-          reminder_created_at: newReminder.createdAt,
-          reminder_schedule: newReminder.scheduled,
+          message_id: newReminder.id,
+          message_title: newReminder.title,
+          message_description: newReminder.description,
+          message_status: userToReminder.status,
+          message_created_at: newReminder.createdAt,
+          message_scheduled: newReminder.scheduled,
+          owner_email: newReminder.owner.email,
           contact_id: userToReminder.contact.id,
           contact_identify: userToReminder.contact.identify,
           contact_channel: userToReminder.contact.channel,
@@ -254,16 +274,6 @@ export class ReminderService {
 
     if (!reminder) {
       throw new NotFoundException('Não foi possível encontrar o lembrete');
-    }
-
-    const scheduledReminder = new Date(reminder.scheduled);
-    const offset = -3 * 60 * 60 * 1000; // -3 horas em milissegundos
-    const now = new Date().setSeconds(0, 0) + offset;
-
-    if (scheduledReminder.getTime() < now) {
-      throw new BadRequestException(
-        'Não é permitido atualizar um lembrete com a data inferior a data corrente',
-      );
     }
 
     // Verifica se os contatos informados foram alterados, caso sim, se eles existem no banco
@@ -430,5 +440,18 @@ export class ReminderService {
     });
 
     return true;
+  }
+
+  public async changeAllMessageStatus(props: MarkMessageAs) {
+    await this.prismaService.usersToReminder.updateMany({
+      where: {
+        id: {
+          in: props.ids,
+        },
+      },
+      data: {
+        status: props.status,
+      },
+    });
   }
 }

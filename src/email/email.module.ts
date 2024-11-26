@@ -1,25 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { MailtrapModule } from './mailtrap/mailtrap.module';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { EmailService } from './email.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EmailListenerController } from '../events/email-listener/email-listener.controller';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot(),
-    MailtrapModule,
-    MailerModule.forRoot({
-      transport: {
-        host: process.env.EMAIL_HOST,
-        port: parseInt(process.env.EMAIL_SERVICE_PORT, 10),
-        auth: {
-          user: process.env.EMAIL_AUTH_USER,
-          pass: process.env.EMAIL_AUTH_PASSWORD,
-        },
-      },
-    }),
-  ],
-  providers: [EmailService],
-  exports: [EmailService],
+  imports: [ConfigModule.forRoot()],
+  controllers: [EmailListenerController],
+  providers: [PrismaService, ConfigService],
+  exports: [],
 })
 export class EmailModule {}

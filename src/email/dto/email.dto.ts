@@ -6,8 +6,8 @@ export interface EmailsToSendDto {
 }
 
 export interface EmailDto {
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
+  descHtml: string;
+  emails: string[];
+  ownerEmail: string;
+  title: string;
 }
