@@ -336,10 +336,16 @@ export class ReminderService {
             contact: {
               select: {
                 id: true,
+
                 identify: true,
                 channel: true,
               },
             },
+          },
+        },
+        owner: {
+          select: {
+            email: true,
           },
         },
       },
@@ -367,14 +373,15 @@ export class ReminderService {
       // Grava no cache o lembrete alterado
       for (const userToReminderUpdated of reminderUpdated.usersToReminder) {
         const key = `${dateFormatted.toISOString()}_${userToReminderUpdated.contact.channel}_${userToReminderUpdated.id}`;
-        const value = {
+        const value: ReminderResponse = {
           id: userToReminderUpdated.id,
-          reminder_id: reminderUpdated.id,
-          reminder_title: reminderUpdated.title,
-          reminder_description: reminderUpdated.description,
-          reminder_status: userToReminderUpdated.status,
-          reminder_created_at: reminderUpdated.createdAt,
-          reminder_schedule: reminderUpdated.scheduled,
+          message_id: reminderUpdated.id,
+          message_title: reminderUpdated.title,
+          message_description: reminderUpdated.description,
+          message_status: userToReminderUpdated.status,
+          message_created_at: reminderUpdated.createdAt,
+          message_scheduled: reminderUpdated.scheduled,
+          owner_email: reminderUpdated.owner.email,
           contact_id: userToReminderUpdated.contact.id,
           contact_identify: userToReminderUpdated.contact.identify,
           contact_channel: userToReminderUpdated.contact.channel,
